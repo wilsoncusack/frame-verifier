@@ -4,3 +4,6 @@
 [submodule "lib/farcaster-solidity"]
 	path = lib/farcaster-solidity
 	url = https://github.com/pavlovdog/farcaster-solidity
+[submodule "lib/FreshCryptoLib"]
+	path = lib/FreshCryptoLib
+	url = https://github.com/rdubois-crypto/FreshCryptoLib
