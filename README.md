@@ -1,1 +1,3 @@
 Inspired by [Farcaster-Solidity](https://github.com/pavlovdog/farcaster-solidity), a lib for building, encoding, and verifying Farcaster MessageData structs containing Frame actions. This might be useful, for example, if you want to use Frames to control a ERC-4337 account, and you want to do more than just check a valid signature. You could accept some fields from the caller, like fid, and populate others yourself: e.g. you could expect the url to match `user-op/<chainId>:<calldata>`, in order to verify something about the data that was signed. 
+
+Code is not audited, provided as is. Use at your own risk :)

@@ -39,7 +39,7 @@ library Blake3 {
         ChunkState chunk_state;
         uint32[8] key_words;
         uint32[8][54] cv_stack; // Space for 54 subtree chaining values:
-        uint8 cv_stack_len;     // 2^54 * CHUNK_LEN = 2^64
+        uint8 cv_stack_len; // 2^54 * CHUNK_LEN = 2^64
         uint32 flags;
     }
 
@@ -59,15 +59,7 @@ library Blake3 {
     }
 
     // Mixing function G
-    function _g(
-        uint32[16] memory state,
-        uint32 a,
-        uint32 b,
-        uint32 c,
-        uint32 d,
-        uint32 mx,
-        uint32 my
-    ) internal pure {
+    function _g(uint32[16] memory state, uint32 a, uint32 b, uint32 c, uint32 d, uint32 mx, uint32 my) internal pure {
         unchecked {
             state[a] = state[a] + state[b] + mx;
             state[d] = _rotr(state[d] ^ state[a], 16);
@@ -140,7 +132,6 @@ library Blake3 {
             flags
         ];
 
-
         _round(state, block_words); // round 1
         _permute(block_words);
         _round(state, block_words); // round 2
@@ -169,21 +160,13 @@ library Blake3 {
     }
 
     function _chaining_value(Output memory o) internal pure returns (uint32[8] memory) {
-        uint32[16] memory compression_output = _compress(
-            o.input_chaining_value,
-            o.block_words,
-            o.counter,
-            o.block_len,
-            o.flags
-        );
+        uint32[16] memory compression_output =
+            _compress(o.input_chaining_value, o.block_words, o.counter, o.block_len, o.flags);
 
         return _first_8_words(compression_output);
     }
 
-    function _root_output_bytes(
-        Output memory self,
-        bytes memory out_slice
-    ) internal pure {
+    function _root_output_bytes(Output memory self, bytes memory out_slice) internal pure {
         //uint32 output_block_counter = 0;
         // Take 64-byte chunks at a time from out_slice
         //for (uint32 i = 0; i < out_slice.length; i += 2 * OUT_LEN) {
@@ -202,20 +185,16 @@ library Blake3 {
         //for (uint32 j = 0; j < words.length; j++) {
         for (uint32 j = 0; j < 8; j++) {
             // Load word at j into out_slice as little endian
-            _load_uint32_to_le_bytes(words[j], out_slice, j*4);
+            _load_uint32_to_le_bytes(words[j], out_slice, j * 4);
         }
 
-            //output_block_counter += 1;
+        //output_block_counter += 1;
         //}
     }
 
-    function _load_uint32_to_le_bytes(
-        uint32 n,
-        bytes memory buf,
-        uint32 offset
-    ) internal pure {
+    function _load_uint32_to_le_bytes(uint32 n, bytes memory buf, uint32 offset) internal pure {
         for (uint256 i = 0; i < 4; ++i) {
-            buf[offset+i] = bytes1(uint8(n / (2 ** (i*8))));
+            buf[offset + i] = bytes1(uint8(n / (2 ** (i * 8))));
         }
     }
 
@@ -233,14 +212,13 @@ library Blake3 {
         return buf;
     }
 
-
     function _le_bytes_get_uint32(bytes memory _bytes, uint256 _start) internal pure returns (uint32) {
         require(_bytes.length >= _start + 4, "le_bytes_get_uint32_outOfBounds");
         uint32 tempUint;
 
         for (uint256 i = 0; i < 4; ++i) {
             //tempUint += uint32(uint8(_bytes[i]) * (2 ** (8*i)));
-            tempUint += uint32(bytes4(_bytes[3-i+_start]) >> (8 * i));
+            tempUint += uint32(bytes4(_bytes[3 - i + _start]) >> (8 * i));
         }
         /*
         assembly {
@@ -258,30 +236,24 @@ library Blake3 {
         return tempUint;
     }
 
-    function _words_from_little_endian_bytes8(
-        bytes memory data_bytes,
-        uint32[8] memory words
-    ) internal pure {
-        require(data_bytes.length <= 4*8,
-                "Data bytes is too long to convert to 8 4-byte words");
+    function _words_from_little_endian_bytes8(bytes memory data_bytes, uint32[8] memory words) internal pure {
+        require(data_bytes.length <= 4 * 8, "Data bytes is too long to convert to 8 4-byte words");
 
-        for (uint256 i = 0; i < data_bytes.length/4; ++i) {
-            words[i] = _le_bytes_get_uint32(data_bytes, i*4);
+        for (uint256 i = 0; i < data_bytes.length / 4; ++i) {
+            words[i] = _le_bytes_get_uint32(data_bytes, i * 4);
         }
     }
 
-    function _words_from_little_endian_bytes(
-        bytes memory data_bytes,
-        uint32[16] memory words
-    ) internal pure {
-        require(data_bytes.length <= 64 && data_bytes.length%4 == 0,
-                "Data bytes is too long to convert to 16 4-byte words");
+    function _words_from_little_endian_bytes(bytes memory data_bytes, uint32[16] memory words) internal pure {
+        require(
+            data_bytes.length <= 64 && data_bytes.length % 4 == 0,
+            "Data bytes is too long to convert to 16 4-byte words"
+        );
 
-        for (uint256 i = 0; i < data_bytes.length/4; ++i) {
-            words[i] = _le_bytes_get_uint32(data_bytes, i*4);
+        for (uint256 i = 0; i < data_bytes.length / 4; ++i) {
+            words[i] = _le_bytes_get_uint32(data_bytes, i * 4);
         }
     }
-
 
     // TODO I wish this didn't require a copy to convert array sizes
     function _first_8_words(uint32[16] memory words) internal pure returns (uint32[8] memory) {
@@ -295,16 +267,14 @@ library Blake3 {
         return first_8;
     }
 
-
     //
     // Chunk state functions
     //
-
-    function _new_chunkstate(
-        uint32[8] memory key_words,
-        uint64 chunk_counter,
-        uint32 flags
-    ) internal pure returns (ChunkState memory) {
+    function _new_chunkstate(uint32[8] memory key_words, uint64 chunk_counter, uint32 flags)
+        internal
+        pure
+        returns (ChunkState memory)
+    {
         bytes memory block_bytes = new bytes(BLOCK_LEN);
         return ChunkState({
             chaining_value: key_words,
@@ -329,10 +299,8 @@ library Blake3 {
     }
 
     // Returns a new input offset
-    function _update_chunkstate(
-        ChunkState memory chunk,
-        bytes memory input
-    ) internal pure {//returns (uint32) {
+    function _update_chunkstate(ChunkState memory chunk, bytes memory input) internal pure {
+        //returns (uint32) {
         uint256 input_offset = 0;
         while (input_offset < input.length) {
             // If the block buffer is full, compress it and clear it. More
@@ -340,13 +308,15 @@ library Blake3 {
             if (chunk.block_len == BLOCK_LEN) {
                 uint32[16] memory block_words;
                 _words_from_little_endian_bytes(chunk.block_bytes, block_words);
-                chunk.chaining_value = _first_8_words(_compress(
-                    chunk.chaining_value,
-                    block_words,
-                    chunk.chunk_counter,
-                    BLOCK_LEN,
-                    chunk.flags | _start_flag(chunk)
-                ));
+                chunk.chaining_value = _first_8_words(
+                    _compress(
+                        chunk.chaining_value,
+                        block_words,
+                        chunk.chunk_counter,
+                        BLOCK_LEN,
+                        chunk.flags | _start_flag(chunk)
+                    )
+                );
                 chunk.blocks_compressed += 1;
                 // TODO probably cheaper to zero-out byte array than to reallocate
                 chunk.block_bytes = new bytes(BLOCK_LEN);
@@ -361,7 +331,7 @@ library Blake3 {
             //chunk.block_bytes[self.block_len as usize..][..take].copy_from_slice(&input[..take]);
             for (uint256 i = 0; i < take; ++i) {
                 // TODO recheck this logic
-                chunk.block_bytes[i+chunk.block_len] = input[input_offset+i];
+                chunk.block_bytes[i + chunk.block_len] = input[input_offset + i];
             }
             /*
             bytes memory block_ref = chunk.block_bytes;
@@ -402,7 +372,6 @@ library Blake3 {
     //
     // Parent functions
     //
-
     function _parent_output(
         uint32[8] memory left_child_cv,
         uint32[8] memory right_child_cv,
@@ -422,7 +391,7 @@ library Blake3 {
         return Output({
             input_chaining_value: key_words,
             block_words: block_words,
-            counter: 0,           // Always 0 for parent nodes.
+            counter: 0, // Always 0 for parent nodes.
             block_len: BLOCK_LEN, // Always BLOCK_LEN (64) for parent nodes.
             flags: PARENT | flags
         });
@@ -437,14 +406,10 @@ library Blake3 {
         return _chaining_value(_parent_output(left_child_cv, right_child_cv, key_words, flags));
     }
 
-
     //
     // Hasher functions
     //
-
-    function _new_hasher_internal(
-        uint32[8] memory key_words, uint32 flags
-    ) internal pure returns (Hasher memory) {
+    function _new_hasher_internal(uint32[8] memory key_words, uint32 flags) internal pure returns (Hasher memory) {
         uint32[8][54] memory cv_stack;
         return Hasher({
             chunk_state: _new_chunkstate(key_words, 0, flags),
@@ -495,11 +460,10 @@ library Blake3 {
         return self.cv_stack[self.cv_stack_len];
     }
 
-    function _add_chunk_chaining_value(
-        Hasher memory self,
-        uint32[8] memory new_cv,
-        uint64 total_chunks
-    ) internal pure {
+    function _add_chunk_chaining_value(Hasher memory self, uint32[8] memory new_cv, uint64 total_chunks)
+        internal
+        pure
+    {
         while (total_chunks & 1 == 0) {
             new_cv = _parent_cv(_pop_stack(self), new_cv, self.key_words, self.flags);
             total_chunks >>= 1;
@@ -508,11 +472,7 @@ library Blake3 {
         _push_stack(self, new_cv);
     }
 
-    function _slice(
-        bytes memory data,
-        uint256 start,
-        uint256 end
-    ) internal pure returns (bytes memory) {
+    function _slice(bytes memory data, uint256 start, uint256 end) internal pure returns (bytes memory) {
         uint256 dataSliceLength = end - start;
         bytes memory dataSlice = new bytes(dataSliceLength);
 
@@ -524,15 +484,13 @@ library Blake3 {
     }
 
     // Add input to the hash state. This can be called any number of times.
-    function update_hasher(
-        Hasher memory self, bytes memory input
-    ) internal pure returns (Hasher memory) {
+    function update_hasher(Hasher memory self, bytes memory input) internal pure returns (Hasher memory) {
         uint256 input_offset = 0;
 
         while (input_offset < input.length) {
             // If the current chunk is complete, finalize it and reset the
             // chunk state. More input is coming, so this chunk is not ROOT.
-                if (_len(self.chunk_state) == CHUNK_LEN) {
+            if (_len(self.chunk_state) == CHUNK_LEN) {
                 uint32[8] memory chunk_cv = _chaining_value(_output(self.chunk_state));
                 uint64 total_chunks = self.chunk_state.chunk_counter + 1;
 
@@ -563,9 +521,7 @@ library Blake3 {
         return output;
     }
 
-    function _finalize_internal(
-        Hasher memory self, bytes memory out_slice
-    ) internal pure {
+    function _finalize_internal(Hasher memory self, bytes memory out_slice) internal pure {
         // Starting with the Output from the current chunk, compute all the
         // parent chaining values along the right edge of the tree, until we
         // have the root Output.
@@ -576,10 +532,7 @@ library Blake3 {
             parent_nodes_remaining -= 1;
 
             output = _parent_output(
-                self.cv_stack[parent_nodes_remaining],
-                _chaining_value(output),
-                self.key_words,
-                self.flags
+                self.cv_stack[parent_nodes_remaining], _chaining_value(output), self.key_words, self.flags
             );
         }
         _root_output_bytes(output, out_slice);
@@ -587,19 +540,16 @@ library Blake3 {
 
     function sliceBytes(bytes memory message, uint64 length) internal pure returns (bytes memory) {
         require(length <= message.length, "Length exceeds message length");
-        
+
         // Overwrite the length field of the bytes to crop the message
         assembly {
             mstore(message, length)
         }
-        
+
         return message;
     }
 
-    function hash(
-        bytes memory message,
-        uint32 length
-    ) external pure returns (bytes memory) {
+    function hash(bytes memory message, uint32 length) external pure returns (bytes memory) {
         Hasher memory hasher = new_hasher();
         update_hasher(hasher, message);
 

@@ -30,16 +30,7 @@ library ProtobufLib {
     /// @return New position
     /// @return Field number
     /// @return Wire type
-    function decode_key(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64,
-            WireType
-        )
-    {
+    function decode_key(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64, WireType) {
         // The key is a varint with encoding
         // (field_number << 3) | wire_type
         (bool success, uint64 pos, uint64 key) = decode_varint(p, buf);
@@ -70,15 +61,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_varint(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_varint(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         uint64 val;
         uint64 i;
 
@@ -134,15 +117,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_int32(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int32
-        )
-    {
+    function decode_int32(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int32) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -165,15 +140,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_int64(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int64
-        )
-    {
+    function decode_int64(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int64) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -188,15 +155,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_uint32(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint32
-        )
-    {
+    function decode_uint32(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint32) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -217,15 +176,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_uint64(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_uint64(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -240,15 +191,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_sint32(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int32
-        )
-    {
+    function decode_sint32(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int32) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -275,15 +218,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_sint64(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int64
-        )
-    {
+    function decode_sint64(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int64) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -304,15 +239,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded bool
-    function decode_bool(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            bool
-        )
-    {
+    function decode_bool(uint64 p, bytes memory buf) internal pure returns (bool, uint64, bool) {
         (bool success, uint64 pos, uint64 val) = decode_varint(p, buf);
         if (!success) {
             return (false, pos, false);
@@ -337,15 +264,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded enum as raw int
-    function decode_enum(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int32
-        )
-    {
+    function decode_enum(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int32) {
         return decode_int32(p, buf);
     }
 
@@ -355,15 +274,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_bits64(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_bits64(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         uint64 val;
 
         // Check that index is within bounds
@@ -387,15 +298,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_fixed64(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_fixed64(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         (bool success, uint64 pos, uint64 val) = decode_bits64(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -410,15 +313,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_sfixed64(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int64
-        )
-    {
+    function decode_sfixed64(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int64) {
         (bool success, uint64 pos, uint64 val) = decode_bits64(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -433,15 +328,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_bits32(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint32
-        )
-    {
+    function decode_bits32(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint32) {
         uint32 val;
 
         // Check that index is within bounds
@@ -465,15 +352,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_fixed32(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint32
-        )
-    {
+    function decode_fixed32(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint32) {
         (bool success, uint64 pos, uint32 val) = decode_bits32(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -488,15 +367,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Decoded int
-    function decode_sfixed32(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            int32
-        )
-    {
+    function decode_sfixed32(uint64 p, bytes memory buf) internal pure returns (bool, uint64, int32) {
         (bool success, uint64 pos, uint32 val) = decode_bits32(p, buf);
         if (!success) {
             return (false, pos, 0);
@@ -511,15 +382,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position (after size)
     /// @return Size in bytes
-    function decode_length_delimited(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_length_delimited(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         // Length-delimited fields begin with a varint of the number of bytes that follow
         (bool success, uint64 pos, uint64 size) = decode_varint(p, buf);
         if (!success) {
@@ -547,15 +410,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position
     /// @return Size in bytes
-    function decode_string(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            string memory
-        )
-    {
+    function decode_string(uint64 p, bytes memory buf) internal pure returns (bool, uint64, string memory) {
         (bool success, uint64 pos, uint64 size) = decode_length_delimited(p, buf);
         if (!success) {
             return (false, pos, "");
@@ -575,15 +430,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position (after size)
     /// @return Size in bytes
-    function decode_bytes(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_bytes(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         return decode_length_delimited(p, buf);
     }
 
@@ -593,15 +440,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position (after size)
     /// @return Size in bytes
-    function decode_embedded_message(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_embedded_message(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         return decode_length_delimited(p, buf);
     }
 
@@ -611,15 +450,7 @@ library ProtobufLib {
     /// @return Success
     /// @return New position (after size)
     /// @return Size in bytes
-    function decode_packed_repeated(uint64 p, bytes memory buf)
-        internal
-        pure
-        returns (
-            bool,
-            uint64,
-            uint64
-        )
-    {
+    function decode_packed_repeated(uint64 p, bytes memory buf) internal pure returns (bool, uint64, uint64) {
         return decode_length_delimited(p, buf);
     }
 

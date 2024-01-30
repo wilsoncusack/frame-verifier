@@ -5,12 +5,7 @@ import "./Sha512.sol";
 import "./Ed25519_pow.sol";
 
 library Ed25519 {
-    function verify(
-        bytes32 k,
-        bytes32 r,
-        bytes32 s,
-        bytes memory m
-    ) external pure returns (bool) {
+    function verify(bytes32 k, bytes32 r, bytes32 s, bytes memory m) external pure returns (bool) {
         unchecked {
             uint256 hh;
             // Step 1: compute SHA-512(R, A, M)
@@ -22,34 +17,30 @@ library Ed25519 {
                 for (uint256 i = 0; i < k.length; i++) {
                     rs[i + 32] = k[i];
                 }
-                    for (uint256 i = 0; i < m.length; i++) {
+                for (uint256 i = 0; i < m.length; i++) {
                     rs[i + 64] = m[i];
                 }
                 uint64[8] memory result = Sha512.hash(rs);
 
-                uint256 h0 = uint256(result[0]) | uint256(result[1]) << 64 | uint256(result[2]) << 128 | uint256(result[3]) << 192;
+                uint256 h0 = uint256(result[0]) | uint256(result[1]) << 64 | uint256(result[2]) << 128
+                    | uint256(result[3]) << 192;
 
-                h0 =
-                    ((h0 & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8) |
-                    ((h0 & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8);
-                h0 =
-                    ((h0 & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16) |
-                    ((h0 & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16);
-                h0 =
-                    ((h0 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32) |
-                    ((h0 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32);
+                h0 = ((h0 & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8)
+                    | ((h0 & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8);
+                h0 = ((h0 & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16)
+                    | ((h0 & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16);
+                h0 = ((h0 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32)
+                    | ((h0 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32);
 
-                uint256 h1 = uint256(result[4]) | uint256(result[5]) << 64 | uint256(result[6]) << 128 | uint256(result[7]) << 192;
+                uint256 h1 = uint256(result[4]) | uint256(result[5]) << 64 | uint256(result[6]) << 128
+                    | uint256(result[7]) << 192;
 
-                h1 =
-                    ((h1 & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8) |
-                    ((h1 & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8);
-                h1 =
-                    ((h1 & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16) |
-                    ((h1 & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16);
-                h1 =
-                    ((h1 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32) |
-                    ((h1 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32);
+                h1 = ((h1 & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8)
+                    | ((h1 & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8);
+                h1 = ((h1 & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16)
+                    | ((h1 & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16);
+                h1 = ((h1 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32)
+                    | ((h1 & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32);
                 hh = addmod(
                     h0,
                     mulmod(
@@ -62,40 +53,38 @@ library Ed25519 {
             }
             // Step 2: unpack k
             k = bytes32(
-                ((uint256(k) & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8) |
-                    ((uint256(k) & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8)
+                ((uint256(k) & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8)
+                    | ((uint256(k) & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8)
             );
             k = bytes32(
-                ((uint256(k) & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16) |
-                    ((uint256(k) & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16)
+                ((uint256(k) & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16)
+                    | ((uint256(k) & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16)
             );
             k = bytes32(
-                ((uint256(k) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32) |
-                    ((uint256(k) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32)
+                ((uint256(k) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32)
+                    | ((uint256(k) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32)
             );
             k = bytes32(
-                ((uint256(k) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff) << 64) |
-                    ((uint256(k) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff_00000000_00000000) >> 64)
+                ((uint256(k) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff) << 64)
+                    | ((uint256(k) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff_00000000_00000000) >> 64)
             );
             k = bytes32((uint256(k) << 128) | (uint256(k) >> 128));
             uint256 ky = uint256(k) & 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff;
             uint256 kx;
             {
                 uint256 ky2 = mulmod(ky, ky, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
-                uint256 u =
-                    addmod(
-                        ky2,
-                        0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffec,
-                        0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                    );
-                uint256 v =
-                    mulmod(
-                        ky2,
-                        0x52036cee_2b6ffe73_8cc74079_7779e898_00700a4d_4141d8ab_75eb4dca_135978a3,
-                        0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                    ) + 1;
+                uint256 u = addmod(
+                    ky2,
+                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffec,
+                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                );
+                uint256 v = mulmod(
+                    ky2,
+                    0x52036cee_2b6ffe73_8cc74079_7779e898_00700a4d_4141d8ab_75eb4dca_135978a3,
+                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                ) + 1;
                 uint256 t = mulmod(u, v, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
-                (kx, ) = Ed25519_pow.pow22501(t);
+                (kx,) = Ed25519_pow.pow22501(t);
                 kx = mulmod(kx, kx, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
                 kx = mulmod(
                     u,
@@ -127,20 +116,20 @@ library Ed25519 {
             }
             // Verify s
             s = bytes32(
-                ((uint256(s) & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8) |
-                    ((uint256(s) & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8)
+                ((uint256(s) & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8)
+                    | ((uint256(s) & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8)
             );
             s = bytes32(
-                ((uint256(s) & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16) |
-                    ((uint256(s) & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16)
+                ((uint256(s) & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16)
+                    | ((uint256(s) & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16)
             );
             s = bytes32(
-                ((uint256(s) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32) |
-                    ((uint256(s) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32)
+                ((uint256(s) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32)
+                    | ((uint256(s) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32)
             );
             s = bytes32(
-                ((uint256(s) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff) << 64) |
-                    ((uint256(s) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff_00000000_00000000) >> 64)
+                ((uint256(s) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff) << 64)
+                    | ((uint256(s) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff_00000000_00000000) >> 64)
             );
             s = bytes32((uint256(s) << 128) | (uint256(s) >> 128));
             if (uint256(s) >= 0x10000000_00000000_00000000_00000000_14def9de_a2f79cd6_5812631a_5cf5d3ed) {
@@ -155,12 +144,11 @@ library Ed25519 {
             {
                 uint256 ks = ky + kx;
                 uint256 kd = ky + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed - kx;
-                uint256 k2dt =
-                    mulmod(
-                        mulmod(kx, ky, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed),
-                        0x2406d9dc_56dffce7_198e80f2_eef3d130_00e0149a_8283b156_ebd69b94_26b2f159,
-                        0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                    );
+                uint256 k2dt = mulmod(
+                    mulmod(kx, ky, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed),
+                    0x2406d9dc_56dffce7_198e80f2_eef3d130_00e0149a_8283b156_ebd69b94_26b2f159,
+                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                );
                 uint256 kky = ky;
                 uint256 kkx = kx;
                 uint256 kku = 1;
@@ -239,7 +227,7 @@ library Ed25519 {
                 }
                 uint256 cprod = 1;
                 uint256[8][3][2] memory tables_ = tables;
-                for (uint256 i = 0; ; i++) {
+                for (uint256 i = 0;; i++) {
                     uint256 cs;
                     uint256 cd;
                     uint256 ct;
@@ -251,11 +239,7 @@ library Ed25519 {
                             mulmod(kky, kku, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
                         uint256 cz =
                             mulmod(kku, kkv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
-                        ct = mulmod(
-                            kkx,
-                            kky,
-                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                        );
+                        ct = mulmod(kkx, kky, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
                         cs = cy + cx;
                         cd = cy - cx + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                         c2z = cz + cz;
@@ -269,11 +253,8 @@ library Ed25519 {
                     );
                     tables_[0][0][i] = c2z;
                     tables_[0][1][i] = cprod;
-                    cprod = mulmod(
-                        cprod,
-                        c2z,
-                        0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                    );
+                    cprod =
+                        mulmod(cprod, c2z, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
                     if (i == 7) {
                         break;
                     }
@@ -300,13 +281,12 @@ library Ed25519 {
                 cprod = mulmod(cprod, cprod, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
                 cprod = mulmod(cprod, cprod, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
                 cprod = mulmod(cprod, t, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
-                for (uint256 i = 7; ; i--) {
-                    uint256 cinv =
-                        mulmod(
-                            cprod,
-                            tables_[0][1][i],
-                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                        );
+                for (uint256 i = 7;; i--) {
+                    uint256 cinv = mulmod(
+                        cprod,
+                        tables_[0][1][i],
+                        0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                    );
                     tables_[1][0][i] = mulmod(
                         tables_[1][0][i],
                         cinv,
@@ -372,7 +352,7 @@ library Ed25519 {
                 uint256 vvu = 1;
                 uint256 vvy = 1;
                 uint256 vvv = 1;
-                for (uint256 i = 252; ; i--) {
+                for (uint256 i = 252;; i--) {
                     uint256 bit = 8 << i;
                     if ((ss & bit) != 0) {
                         uint256 ws;
@@ -380,52 +360,39 @@ library Ed25519 {
                         uint256 wz;
                         uint256 wt;
                         {
-                            uint256 wx =
-                                mulmod(
-                                    vvx,
-                                    vvv,
-                                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                                );
-                            uint256 wy =
-                                mulmod(
-                                    vvy,
-                                    vvu,
-                                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                                );
+                            uint256 wx = mulmod(
+                                vvx, vvv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                            );
+                            uint256 wy = mulmod(
+                                vvy, vvu, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                            );
                             ws = wy + wx;
                             wd = wy - wx + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                             wz = mulmod(
-                                vvu,
-                                vvv,
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                                vvu, vvv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
                             );
                             wt = mulmod(
-                                vvx,
-                                vvy,
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                                vvx, vvy, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
                             );
                         }
                         uint256 j = (ss >> i) & 7;
                         ss &= ~(7 << i);
                         uint256[8][3][2] memory tables_ = tables;
-                        uint256 aa =
-                            mulmod(
-                                wd,
-                                tables_[0][1][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
-                        uint256 ab =
-                            mulmod(
-                                ws,
-                                tables_[0][0][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
-                        uint256 ac =
-                            mulmod(
-                                wt,
-                                tables_[0][2][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
+                        uint256 aa = mulmod(
+                            wd,
+                            tables_[0][1][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
+                        uint256 ab = mulmod(
+                            ws,
+                            tables_[0][0][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
+                        uint256 ac = mulmod(
+                            wt,
+                            tables_[0][2][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
                         vvx = ab - aa + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                         vvu = wz + ac;
                         vvy = ab + aa;
@@ -437,52 +404,39 @@ library Ed25519 {
                         uint256 wz;
                         uint256 wt;
                         {
-                            uint256 wx =
-                                mulmod(
-                                    vvx,
-                                    vvv,
-                                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                                );
-                            uint256 wy =
-                                mulmod(
-                                    vvy,
-                                    vvu,
-                                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                                );
+                            uint256 wx = mulmod(
+                                vvx, vvv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                            );
+                            uint256 wy = mulmod(
+                                vvy, vvu, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                            );
                             ws = wy + wx;
                             wd = wy - wx + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                             wz = mulmod(
-                                vvu,
-                                vvv,
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                                vvu, vvv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
                             );
                             wt = mulmod(
-                                vvx,
-                                vvy,
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                                vvx, vvy, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
                             );
                         }
                         uint256 j = (hhh >> i) & 7;
                         hhh &= ~(7 << i);
                         uint256[8][3][2] memory tables_ = tables;
-                        uint256 aa =
-                            mulmod(
-                                wd,
-                                tables_[1][0][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
-                        uint256 ab =
-                            mulmod(
-                                ws,
-                                tables_[1][1][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
-                        uint256 ac =
-                            mulmod(
-                                wt,
-                                tables_[1][2][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
+                        uint256 aa = mulmod(
+                            wd,
+                            tables_[1][0][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
+                        uint256 ab = mulmod(
+                            ws,
+                            tables_[1][1][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
+                        uint256 ac = mulmod(
+                            wt,
+                            tables_[1][2][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
                         vvx = ab - aa + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                         vvu = wz - ac + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                         vvy = ab + aa;
@@ -494,51 +448,38 @@ library Ed25519 {
                         uint256 wz;
                         uint256 wt;
                         {
-                            uint256 wx =
-                                mulmod(
-                                    vvx,
-                                    vvv,
-                                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                                );
-                            uint256 wy =
-                                mulmod(
-                                    vvy,
-                                    vvu,
-                                    0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                                );
+                            uint256 wx = mulmod(
+                                vvx, vvv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                            );
+                            uint256 wy = mulmod(
+                                vvy, vvu, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                            );
                             ws = wy + wx;
                             wd = wy - wx + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                             wz = mulmod(
-                                vvu,
-                                vvv,
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                                vvu, vvv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
                             );
                             wt = mulmod(
-                                vvx,
-                                vvy,
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                                vvx, vvy, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
                             );
                         }
                         uint256 j = hhh & 7;
                         uint256[8][3][2] memory tables_ = tables;
-                        uint256 aa =
-                            mulmod(
-                                wd,
-                                tables_[1][0][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
-                        uint256 ab =
-                            mulmod(
-                                ws,
-                                tables_[1][1][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
-                        uint256 ac =
-                            mulmod(
-                                wt,
-                                tables_[1][2][j],
-                                0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
-                            );
+                        uint256 aa = mulmod(
+                            wd,
+                            tables_[1][0][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
+                        uint256 ab = mulmod(
+                            ws,
+                            tables_[1][1][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
+                        uint256 ac = mulmod(
+                            wt,
+                            tables_[1][2][j],
+                            0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed
+                        );
                         vvx = ab - aa + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                         vvu = wz - ac + 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed;
                         vvy = ab + aa;
@@ -576,8 +517,9 @@ library Ed25519 {
                 vv = vvv;
             }
             // Step 5: compare the points
-            (uint256 vi, uint256 vj) =
-                Ed25519_pow.pow22501(mulmod(vu, vv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed));
+            (uint256 vi, uint256 vj) = Ed25519_pow.pow22501(
+                mulmod(vu, vv, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed)
+            );
             vi = mulmod(vi, vi, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
             vi = mulmod(vi, vi, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
             vi = mulmod(vi, vi, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
@@ -596,20 +538,20 @@ library Ed25519 {
             );
             bytes32 vr = bytes32(vy | (vx << 255));
             vr = bytes32(
-                ((uint256(vr) & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8) |
-                    ((uint256(vr) & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8)
+                ((uint256(vr) & 0xff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff_00ff00ff) << 8)
+                    | ((uint256(vr) & 0xff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00_ff00ff00) >> 8)
             );
             vr = bytes32(
-                ((uint256(vr) & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16) |
-                    ((uint256(vr) & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16)
+                ((uint256(vr) & 0xffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff_0000ffff) << 16)
+                    | ((uint256(vr) & 0xffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000_ffff0000) >> 16)
             );
             vr = bytes32(
-                ((uint256(vr) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32) |
-                    ((uint256(vr) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32)
+                ((uint256(vr) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff) << 32)
+                    | ((uint256(vr) & 0xffffffff_00000000_ffffffff_00000000_ffffffff_00000000_ffffffff_00000000) >> 32)
             );
             vr = bytes32(
-                ((uint256(vr) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff) << 64) |
-                    ((uint256(vr) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff_00000000_00000000) >> 64)
+                ((uint256(vr) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff) << 64)
+                    | ((uint256(vr) & 0xffffffff_ffffffff_00000000_00000000_ffffffff_ffffffff_00000000_00000000) >> 64)
             );
             vr = bytes32((uint256(vr) << 128) | (uint256(vr) >> 128));
 

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.9;
 
-
 library Ed25519_pow {
-      // Computes (v^(2^250-1), v^11) mod p
+    // Computes (v^(2^250-1), v^11) mod p
     function pow22501(uint256 v) external pure returns (uint256 p22501, uint256 p11) {
         p11 = mulmod(v, v, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);
         p22501 = mulmod(p11, p11, 0x7fffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffff_ffffffed);

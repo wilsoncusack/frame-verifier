@@ -8,11 +8,7 @@ library Sha512 {
     //          The purpose of this padding is to ensure that the padded message is a multiple of 1024 bits.
     // @param message input raw message bytes
     // @return padded message bytes
-    function preprocess(bytes memory message)
-        internal
-        pure
-        returns (bytes memory)
-    {
+    function preprocess(bytes memory message) internal pure returns (bytes memory) {
         uint256 padding = 128 - (message.length % 128);
         if (message.length % 128 >= 112) {
             padding = 256 - (message.length % 128);
@@ -27,18 +23,12 @@ library Sha512 {
         uint128 bitSize = uint128(message.length * 8);
         bytes memory bitlength = abi.encodePacked(bitSize);
         for (uint256 index = 0; index < bitlength.length; index++) {
-            result[result.length - 1 - index] = bitlength[
-                bitlength.length - 1 - index
-            ];
+            result[result.length - 1 - index] = bitlength[bitlength.length - 1 - index];
         }
         return result;
     }
 
-    function bytesToBytes8(bytes memory b, uint256 offset)
-        internal
-        pure
-        returns (bytes8)
-    {
+    function bytesToBytes8(bytes memory b, uint256 offset) internal pure returns (bytes8) {
         bytes8 out;
         for (uint256 i = 0; i < 8; i++) {
             out |= bytes8(b[offset + i] & 0xFF) >> (i * 8);
@@ -46,11 +36,7 @@ library Sha512 {
         return out;
     }
 
-    function cutBlock(bytes memory data, uint256 blockIndex)
-        internal
-        pure
-        returns (uint64[16] memory)
-    {
+    function cutBlock(bytes memory data, uint256 blockIndex) internal pure returns (uint64[16] memory) {
         uint64[16] memory result;
         for (uint8 r = 0; r < result.length; r++) {
             result[r] = uint64(bytesToBytes8(data, blockIndex * 128 + r * 8));
@@ -82,11 +68,7 @@ library Sha512 {
     // @param y y
     // @param z z
     // @return uint64
-    function Ch(
-        uint64 x,
-        uint64 y,
-        uint64 z
-    ) internal pure returns (uint64) {
+    function Ch(uint64 x, uint64 y, uint64 z) internal pure returns (uint64) {
         return (x & y) ^ ((x ^ 0xffffffffffffffff) & z);
     }
 
@@ -95,11 +77,7 @@ library Sha512 {
     // @param y y
     // @param z z
     // @return uint64
-    function Maj(
-        uint64 x,
-        uint64 y,
-        uint64 z
-    ) internal pure returns (uint64) {
+    function Maj(uint64 x, uint64 y, uint64 z) internal pure returns (uint64) {
         return (x & y) ^ (x & z) ^ (y & z);
     }
 
@@ -265,19 +243,10 @@ library Sha512 {
                     if (i < 16) {
                         W[i] = M[i];
                     } else {
-                        W[i] =
-                            gamma1(W[i - 2]) +
-                            W[i - 7] +
-                            gamma0(W[i - 15]) +
-                            W[i - 16];
+                        W[i] = gamma1(W[i - 2]) + W[i - 7] + gamma0(W[i - 15]) + W[i - 16];
                     }
 
-                    T1 =
-                        fvar.h +
-                        sigma1(fvar.e) +
-                        Ch(fvar.e, fvar.f, fvar.g) +
-                        K[i] +
-                        W[i];
+                    T1 = fvar.h + sigma1(fvar.e) + Ch(fvar.e, fvar.f, fvar.g) + K[i] + W[i];
                     T2 = sigma0(fvar.a) + Maj(fvar.a, fvar.b, fvar.c);
 
                     fvar.h = fvar.g;
@@ -298,7 +267,7 @@ library Sha512 {
                 H[5] = H[5] + fvar.f;
                 H[6] = H[6] + fvar.g;
                 H[7] = H[7] + fvar.h;
-            }           
+            }
         }
 
         return H;
