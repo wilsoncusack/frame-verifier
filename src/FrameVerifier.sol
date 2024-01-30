@@ -27,7 +27,7 @@ library FrameVerifier {
         bytes32 signature_r,
         bytes32 signature_s,
         MessageData memory messageData
-    ) external pure {
-        _verifyMessage(public_key, signature_r, signature_s, MessageDataCodec.encode(messageData));
+    ) external pure returns (bool) {
+        return _verifyMessage(public_key, signature_r, signature_s, MessageDataCodec.encode(messageData));
     }
 }
