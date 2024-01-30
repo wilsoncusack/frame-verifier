@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+// from https://github.com/celestiaorg/protobuf3-solidity-lib/blob/master/contracts/ProtobufLib.sol
 pragma solidity >=0.8.4 <0.9.0;
 
 library ProtobufLib {
