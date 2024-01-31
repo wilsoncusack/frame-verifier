@@ -61,105 +61,36 @@ library MessageDataCodec {
     }
 
     function encode(MessageData memory instance) internal pure returns (bytes memory) {
-        MessageData__Encoded memory encodedInstance;
-        uint64 len;
-        uint64 index;
-
-        // Omit encoding type_ if default value
-        if (uint64(instance.type_) != 0) {
-            // Encode key for type_
-            encodedInstance.type___Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
-
-            // Encode type_
-            encodedInstance.type_ = ProtobufLib.encode_int32(int32(uint32(instance.type_)));
-        }
-
-        // Omit encoding fid if default value
-        if (uint64(instance.fid) != 0) {
-            // Encode key for fid
-            encodedInstance.fid__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
-            // Encode fid
-            encodedInstance.fid = ProtobufLib.encode_uint64(instance.fid);
-        }
-
-        // Omit encoding timestamp if default value
-        if (uint64(instance.timestamp) != 0) {
-            // Encode key for timestamp
-            encodedInstance.timestamp__Key = ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint));
-            // Encode timestamp
-            encodedInstance.timestamp = ProtobufLib.encode_uint32(instance.timestamp);
-        }
-
-        // Omit encoding network if default value
-        if (uint64(instance.network) != 0) {
-            // Encode key for network
-            encodedInstance.network__Key = ProtobufLib.encode_key(4, uint64(ProtobufLib.WireType.Varint));
-            // Encode network
-            encodedInstance.network = ProtobufLib.encode_int32(int32(uint32(instance.network)));
-        }
+        // Omit encoding fields if default value
+        bytes memory type__Key = uint64(instance.type_) != 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory type_ = uint64(instance.type_) != 0 ? ProtobufLib.encode_int32(int32(uint32(instance.type_))) : new bytes(0);
+        bytes memory fid__Key = uint64(instance.fid) != 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory fid = uint64(instance.fid) != 0 ? ProtobufLib.encode_uint64(instance.fid) : new bytes(0);
+        bytes memory timestamp__Key = uint64(instance.timestamp) != 0 ? ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory timestamp = uint64(instance.timestamp) != 0 ? ProtobufLib.encode_uint32(instance.timestamp) : new bytes(0);
+        bytes memory network__Key = uint64(instance.network) != 0 ? ProtobufLib.encode_key(4, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory network = uint64(instance.network) != 0 ? ProtobufLib.encode_int32(int32(uint32(instance.network))) : new bytes(0);
 
         // Encode frame_action_body
-        encodedInstance.frame_action_body = FrameActionBodyCodec.encodeNested(16, instance.frame_action_body);
-
-        encodedInstance.frame_action_body__Encoded = abi.encodePacked(
-            encodedInstance.frame_action_body.key,
-            encodedInstance.frame_action_body.length,
-            encodedInstance.frame_action_body.nestedInstance
+        FrameActionBodyCodec.FrameActionBody__Encoded__Nested memory frame_action_body = FrameActionBodyCodec.encodeNested(16, instance.frame_action_body);
+        bytes memory frame_action_body__Encoded = abi.encodePacked(
+            frame_action_body.key,
+            frame_action_body.length,
+            frame_action_body.nestedInstance
         );
 
-        bytes memory finalEncoded;
-        len = 0;
-        len += uint64(encodedInstance.type___Key.length);
-        len += uint64(encodedInstance.type_.length);
-        len += uint64(encodedInstance.fid__Key.length);
-        len += uint64(encodedInstance.fid.length);
-        len += uint64(encodedInstance.timestamp__Key.length);
-        len += uint64(encodedInstance.timestamp.length);
-        len += uint64(encodedInstance.network__Key.length);
-        len += uint64(encodedInstance.network.length);
-        // len += uint64(encodedInstance.frame_action_body.key.length);
-        len += uint64(encodedInstance.frame_action_body__Encoded.length);
-        finalEncoded = new bytes(len);
-
-        uint64 j;
-        j = 0;
-        while (j < encodedInstance.type___Key.length) {
-            finalEncoded[index++] = encodedInstance.type___Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.type_.length) {
-            finalEncoded[index++] = encodedInstance.type_[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.fid__Key.length) {
-            finalEncoded[index++] = encodedInstance.fid__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.fid.length) {
-            finalEncoded[index++] = encodedInstance.fid[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.timestamp__Key.length) {
-            finalEncoded[index++] = encodedInstance.timestamp__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.timestamp.length) {
-            finalEncoded[index++] = encodedInstance.timestamp[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.network__Key.length) {
-            finalEncoded[index++] = encodedInstance.network__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.network.length) {
-            finalEncoded[index++] = encodedInstance.network[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.frame_action_body__Encoded.length) {
-            finalEncoded[index++] = encodedInstance.frame_action_body__Encoded[j++];
-        }
-
-        return finalEncoded;
+        // Use abi.encodePacked for efficient concatenation
+        return abi.encodePacked(
+            type__Key,
+            type_,
+            fid__Key,
+            fid,
+            timestamp__Key,
+            timestamp,
+            network__Key,
+            network,
+            frame_action_body__Encoded
+        );
     }
 
     // Encode a nested MessageData, wrapped in key and length if non-default
@@ -168,17 +99,12 @@ library MessageDataCodec {
         pure
         returns (MessageData__Encoded__Nested memory)
     {
-        MessageData__Encoded__Nested memory wrapped;
+        bytes memory nestedInstance = encode(instance);
+        uint64 len = uint64(nestedInstance.length);
+        bytes memory key = len > 0 ? ProtobufLib.encode_key(field_number, 2) : new bytes(0);
+        bytes memory length = len > 0 ? ProtobufLib.encode_uint64(len) : new bytes(0);
 
-        wrapped.nestedInstance = encode(instance);
-
-        uint64 len = uint64(wrapped.nestedInstance.length);
-        if (len > 0) {
-            wrapped.key = ProtobufLib.encode_key(field_number, 2);
-            wrapped.length = ProtobufLib.encode_uint64(len);
-        }
-
-        return wrapped;
+        return MessageData__Encoded__Nested(key, length, nestedInstance);
     }
 }
 
@@ -205,60 +131,19 @@ library CastIdCodec {
     }
 
     function encode(CastId memory instance) internal pure returns (bytes memory) {
-        CastId__Encoded memory encodedInstance;
-        uint64 len;
-        uint64 index;
+        bytes memory fid__Key = uint64(instance.fid) != 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory fid = uint64(instance.fid) != 0 ? ProtobufLib.encode_uint64(instance.fid) : new bytes(0);
+        bytes memory hash__Key = instance.hash.length > 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited)) : new bytes(0);
+        bytes memory hash__Length = instance.hash.length > 0 ? ProtobufLib.encode_uint64(uint64(instance.hash.length)) : new bytes(0);
+        bytes memory hash = instance.hash.length > 0 ? bytes(instance.hash) : new bytes(0);
 
-        // Omit encoding fid if default value
-        if (uint64(instance.fid) != 0) {
-            // Encode key for fid
-            encodedInstance.fid__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint));
-            // Encode fid
-            encodedInstance.fid = ProtobufLib.encode_uint64(instance.fid);
-        }
-
-        // Omit encoding hash if default value
-        if (bytes(instance.hash).length > 0) {
-            // Encode key for hash
-            encodedInstance.hash__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited));
-            // Encode hash
-            encodedInstance.hash__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.hash).length));
-            encodedInstance.hash = bytes(instance.hash);
-        }
-
-        bytes memory finalEncoded;
-        index = 0;
-        len = 0;
-        len += uint64(encodedInstance.fid__Key.length);
-        len += uint64(encodedInstance.fid.length);
-        len += uint64(encodedInstance.hash__Key.length);
-        len += uint64(encodedInstance.hash__Length.length);
-        len += uint64(encodedInstance.hash.length);
-        finalEncoded = new bytes(len);
-
-        uint64 j;
-        j = 0;
-        while (j < encodedInstance.fid__Key.length) {
-            finalEncoded[index++] = encodedInstance.fid__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.fid.length) {
-            finalEncoded[index++] = encodedInstance.fid[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.hash__Key.length) {
-            finalEncoded[index++] = encodedInstance.hash__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.hash__Length.length) {
-            finalEncoded[index++] = encodedInstance.hash__Length[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.hash.length) {
-            finalEncoded[index++] = encodedInstance.hash[j++];
-        }
-
-        return finalEncoded;
+        return abi.encodePacked(
+            fid__Key,
+            fid,
+            hash__Key,
+            hash__Length,
+            hash
+        );
     }
 
     // Encode a nested CastId, wrapped in key and length if non-default
@@ -267,17 +152,12 @@ library CastIdCodec {
         pure
         returns (CastId__Encoded__Nested memory)
     {
-        CastId__Encoded__Nested memory wrapped;
+        bytes memory nestedInstance = encode(instance);
+        uint64 len = uint64(nestedInstance.length);
+        bytes memory key = len > 0 ? ProtobufLib.encode_key(field_number, 2) : new bytes(0);
+        bytes memory length = len > 0 ? ProtobufLib.encode_uint64(len) : new bytes(0);
 
-        wrapped.nestedInstance = encode(instance);
-
-        uint64 len = uint64(wrapped.nestedInstance.length);
-        if (len > 0) {
-            wrapped.key = ProtobufLib.encode_key(field_number, 2);
-            wrapped.length = ProtobufLib.encode_uint64(len);
-        }
-
-        return wrapped;
+        return CastId__Encoded__Nested(key, length, nestedInstance);
     }
 }
 
@@ -307,75 +187,26 @@ library FrameActionBodyCodec {
     }
 
     function encode(FrameActionBody memory instance) internal pure returns (bytes memory) {
-        FrameActionBody__Encoded memory encodedInstance;
-        uint64 len;
-        uint64 index;
-
-        // Omit encoding url if default value
-        if (bytes(instance.url).length > 0) {
-            // Encode key for url
-            encodedInstance.url__Key = ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited));
-            // Encode url
-            encodedInstance.url__Length = ProtobufLib.encode_uint64(uint64(bytes(instance.url).length));
-            encodedInstance.url = bytes(instance.url);
-        }
-
-        // Omit encoding button_index if default value
-        if (uint64(instance.button_index) != 0) {
-            // Encode key for button_index
-            encodedInstance.button_index__Key = ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint));
-            // Encode button_index
-            encodedInstance.button_index = ProtobufLib.encode_uint32(instance.button_index);
-        }
-
-        // Encode cast_id
-        encodedInstance.cast_id = CastIdCodec.encodeNested(3, instance.cast_id);
-
-        encodedInstance.cast_id__Encoded = abi.encodePacked(
-            encodedInstance.cast_id.key, encodedInstance.cast_id.length, encodedInstance.cast_id.nestedInstance
+        bytes memory url__Key = instance.url.length > 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited)) : new bytes(0);
+        bytes memory url__Length = instance.url.length > 0 ? ProtobufLib.encode_uint64(uint64(instance.url.length)) : new bytes(0);
+        bytes memory url = instance.url.length > 0 ? bytes(instance.url) : new bytes(0);
+        bytes memory button_index__Key = uint64(instance.button_index) != 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory button_index = uint64(instance.button_index) != 0 ? ProtobufLib.encode_uint32(instance.button_index) : new bytes(0);
+        CastIdCodec.CastId__Encoded__Nested memory cast_id = CastIdCodec.encodeNested(3, instance.cast_id);
+        bytes memory cast_id__Encoded = abi.encodePacked(
+            cast_id.key,
+            cast_id.length,
+            cast_id.nestedInstance
         );
 
-        bytes memory finalEncoded;
-        index = 0;
-        len = 0;
-        len += uint64(encodedInstance.url__Key.length);
-        len += uint64(encodedInstance.url__Length.length);
-        len += uint64(encodedInstance.url.length);
-        len += uint64(encodedInstance.button_index__Key.length);
-        len += uint64(encodedInstance.button_index.length);
-        // len += uint64(encodedInstance.cast_id.key.length);
-        len += uint64(encodedInstance.cast_id__Encoded.length);
-        finalEncoded = new bytes(len);
-
-        uint64 j;
-        j = 0;
-        while (j < encodedInstance.url__Key.length) {
-            finalEncoded[index++] = encodedInstance.url__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.url__Length.length) {
-            finalEncoded[index++] = encodedInstance.url__Length[j++];
-        }
-
-        j = 0;
-        while (j < encodedInstance.url.length) {
-            finalEncoded[index++] = encodedInstance.url[j++];
-        }
-
-        j = 0;
-        while (j < encodedInstance.button_index__Key.length) {
-            finalEncoded[index++] = encodedInstance.button_index__Key[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.button_index.length) {
-            finalEncoded[index++] = encodedInstance.button_index[j++];
-        }
-        j = 0;
-        while (j < encodedInstance.cast_id__Encoded.length) {
-            finalEncoded[index++] = encodedInstance.cast_id__Encoded[j++];
-        }
-
-        return finalEncoded;
+        return abi.encodePacked(
+            url__Key,
+            url__Length,
+            url,
+            button_index__Key,
+            button_index,
+            cast_id__Encoded
+        );
     }
 
     // Encode a nested FrameActionBody, wrapped in key and length if non-default
@@ -384,16 +215,11 @@ library FrameActionBodyCodec {
         pure
         returns (FrameActionBody__Encoded__Nested memory)
     {
-        FrameActionBody__Encoded__Nested memory wrapped;
+        bytes memory nestedInstance = encode(instance);
+        uint64 len = uint64(nestedInstance.length);
+        bytes memory key = len > 0 ? ProtobufLib.encode_key(field_number, 2) : new bytes(0);
+        bytes memory length = len > 0 ? ProtobufLib.encode_uint64(len) : new bytes(0);
 
-        wrapped.nestedInstance = encode(instance);
-
-        uint64 len = uint64(wrapped.nestedInstance.length);
-        if (len > 0) {
-            wrapped.key = ProtobufLib.encode_key(field_number, 2);
-            wrapped.length = ProtobufLib.encode_uint64(len);
-        }
-
-        return wrapped;
+        return FrameActionBody__Encoded__Nested(key, length, nestedInstance);
     }
 }
