@@ -62,22 +62,29 @@ library MessageDataCodec {
 
     function encode(MessageData memory instance) internal pure returns (bytes memory) {
         // Omit encoding fields if default value
-        bytes memory type__Key = uint64(instance.type_) != 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
-        bytes memory type_ = uint64(instance.type_) != 0 ? ProtobufLib.encode_int32(int32(uint32(instance.type_))) : new bytes(0);
-        bytes memory fid__Key = uint64(instance.fid) != 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory type__Key =
+            uint64(instance.type_) != 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory type_ =
+            uint64(instance.type_) != 0 ? ProtobufLib.encode_int32(int32(uint32(instance.type_))) : new bytes(0);
+        bytes memory fid__Key =
+            uint64(instance.fid) != 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
         bytes memory fid = uint64(instance.fid) != 0 ? ProtobufLib.encode_uint64(instance.fid) : new bytes(0);
-        bytes memory timestamp__Key = uint64(instance.timestamp) != 0 ? ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
-        bytes memory timestamp = uint64(instance.timestamp) != 0 ? ProtobufLib.encode_uint32(instance.timestamp) : new bytes(0);
-        bytes memory network__Key = uint64(instance.network) != 0 ? ProtobufLib.encode_key(4, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
-        bytes memory network = uint64(instance.network) != 0 ? ProtobufLib.encode_int32(int32(uint32(instance.network))) : new bytes(0);
+        bytes memory timestamp__Key = uint64(instance.timestamp) != 0
+            ? ProtobufLib.encode_key(3, uint64(ProtobufLib.WireType.Varint))
+            : new bytes(0);
+        bytes memory timestamp =
+            uint64(instance.timestamp) != 0 ? ProtobufLib.encode_uint32(instance.timestamp) : new bytes(0);
+        bytes memory network__Key = uint64(instance.network) != 0
+            ? ProtobufLib.encode_key(4, uint64(ProtobufLib.WireType.Varint))
+            : new bytes(0);
+        bytes memory network =
+            uint64(instance.network) != 0 ? ProtobufLib.encode_int32(int32(uint32(instance.network))) : new bytes(0);
 
         // Encode frame_action_body
-        FrameActionBodyCodec.FrameActionBody__Encoded__Nested memory frame_action_body = FrameActionBodyCodec.encodeNested(16, instance.frame_action_body);
-        bytes memory frame_action_body__Encoded = abi.encodePacked(
-            frame_action_body.key,
-            frame_action_body.length,
-            frame_action_body.nestedInstance
-        );
+        FrameActionBodyCodec.FrameActionBody__Encoded__Nested memory frame_action_body =
+            FrameActionBodyCodec.encodeNested(16, instance.frame_action_body);
+        bytes memory frame_action_body__Encoded =
+            abi.encodePacked(frame_action_body.key, frame_action_body.length, frame_action_body.nestedInstance);
 
         // Use abi.encodePacked for efficient concatenation
         return abi.encodePacked(
@@ -131,19 +138,17 @@ library CastIdCodec {
     }
 
     function encode(CastId memory instance) internal pure returns (bytes memory) {
-        bytes memory fid__Key = uint64(instance.fid) != 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
+        bytes memory fid__Key =
+            uint64(instance.fid) != 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
         bytes memory fid = uint64(instance.fid) != 0 ? ProtobufLib.encode_uint64(instance.fid) : new bytes(0);
-        bytes memory hash__Key = instance.hash.length > 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited)) : new bytes(0);
-        bytes memory hash__Length = instance.hash.length > 0 ? ProtobufLib.encode_uint64(uint64(instance.hash.length)) : new bytes(0);
+        bytes memory hash__Key = instance.hash.length > 0
+            ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.LengthDelimited))
+            : new bytes(0);
+        bytes memory hash__Length =
+            instance.hash.length > 0 ? ProtobufLib.encode_uint64(uint64(instance.hash.length)) : new bytes(0);
         bytes memory hash = instance.hash.length > 0 ? bytes(instance.hash) : new bytes(0);
 
-        return abi.encodePacked(
-            fid__Key,
-            fid,
-            hash__Key,
-            hash__Length,
-            hash
-        );
+        return abi.encodePacked(fid__Key, fid, hash__Key, hash__Length, hash);
     }
 
     // Encode a nested CastId, wrapped in key and length if non-default
@@ -187,26 +192,21 @@ library FrameActionBodyCodec {
     }
 
     function encode(FrameActionBody memory instance) internal pure returns (bytes memory) {
-        bytes memory url__Key = instance.url.length > 0 ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited)) : new bytes(0);
-        bytes memory url__Length = instance.url.length > 0 ? ProtobufLib.encode_uint64(uint64(instance.url.length)) : new bytes(0);
+        bytes memory url__Key = instance.url.length > 0
+            ? ProtobufLib.encode_key(1, uint64(ProtobufLib.WireType.LengthDelimited))
+            : new bytes(0);
+        bytes memory url__Length =
+            instance.url.length > 0 ? ProtobufLib.encode_uint64(uint64(instance.url.length)) : new bytes(0);
         bytes memory url = instance.url.length > 0 ? bytes(instance.url) : new bytes(0);
-        bytes memory button_index__Key = uint64(instance.button_index) != 0 ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint)) : new bytes(0);
-        bytes memory button_index = uint64(instance.button_index) != 0 ? ProtobufLib.encode_uint32(instance.button_index) : new bytes(0);
+        bytes memory button_index__Key = uint64(instance.button_index) != 0
+            ? ProtobufLib.encode_key(2, uint64(ProtobufLib.WireType.Varint))
+            : new bytes(0);
+        bytes memory button_index =
+            uint64(instance.button_index) != 0 ? ProtobufLib.encode_uint32(instance.button_index) : new bytes(0);
         CastIdCodec.CastId__Encoded__Nested memory cast_id = CastIdCodec.encodeNested(3, instance.cast_id);
-        bytes memory cast_id__Encoded = abi.encodePacked(
-            cast_id.key,
-            cast_id.length,
-            cast_id.nestedInstance
-        );
+        bytes memory cast_id__Encoded = abi.encodePacked(cast_id.key, cast_id.length, cast_id.nestedInstance);
 
-        return abi.encodePacked(
-            url__Key,
-            url__Length,
-            url,
-            button_index__Key,
-            button_index,
-            cast_id__Encoded
-        );
+        return abi.encodePacked(url__Key, url__Length, url, button_index__Key, button_index, cast_id__Encoded);
     }
 
     // Encode a nested FrameActionBody, wrapped in key and length if non-default
