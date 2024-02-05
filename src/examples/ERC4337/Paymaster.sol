@@ -7,6 +7,12 @@ import {SharedVerifier} from "../SharedVerifier.sol";
 
 /// @dev WARNING: This was written quickly with no tests, almost certainly has bugs
 contract Paymaster {
+    enum PostOpMode {
+        opSucceeded,
+        opReverted,
+        postOpReverted
+    }
+    
     mapping(bytes32 => uint256) public castBalance;
     mapping(uint256 => uint256) public fidBalance;
 
@@ -67,11 +73,5 @@ contract Paymaster {
         } else {
             fidBalance[identifier] += credit;
         }
-    }
-
-    enum PostOpMode {
-        opSucceeded,
-        opReverted,
-        postOpReverted
     }
 }
