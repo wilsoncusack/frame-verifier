@@ -5,6 +5,7 @@ import {UserOperation} from "./UserOperation.sol";
 import {Account} from "./Account.sol";
 import {SharedVerifier} from "../SharedVerifier.sol";
 
+/// @dev WARNING: This was written quickly with no tests, almost certainly has bugs
 contract Paymaster {
     mapping(bytes32 => uint256) public castBalance;
     mapping(uint256 => uint256) public fidBalance;

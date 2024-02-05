@@ -7,6 +7,7 @@ import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {UserOperation} from "./UserOperation.sol";
 import {SharedVerifier} from "../SharedVerifier.sol";
 
+/// @dev WARNING: This was written quickly with no tests, almost certainly has bugs
 contract Account {
     bytes32 public publicKey;
     string public baseUrl;

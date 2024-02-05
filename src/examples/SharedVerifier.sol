@@ -3,8 +3,9 @@ pragma solidity ^0.8.9;
 
 import {MessageData, FrameVerifier} from "../FrameVerifier.sol";
 
-// To attempt to save gas verifying Frames in multiple contracts
-// we can use a shared verifier that saves the result
+/// @notice To attempt to save gas verifying Frames in multiple contracts
+/// we can use a shared verifier that saves the result
+/// @dev WARNING: This was written quickly with no tests, almost certainly has bugs
 contract SharedVerifier {
     mapping(bytes32 => bool) public isValid;
 
